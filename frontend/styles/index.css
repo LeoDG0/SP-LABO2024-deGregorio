@@ -1,0 +1,168 @@
+@font-face {
+  font-family: itim;
+  src: url(../assets/fonts/Itim-Regular.ttf);
+}
+
+.contenedor{
+  width: 100%;
+  max-width: 2000px;
+  margin: auto;
+}
+
+header {
+  padding: 20px 20px;
+  background-color: grey;
+  background-image: url(../assets/images/background.jpg);
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  flex-direction: column;
+  justify-content: space-between;
+
+  height: 100vh;
+
+  font-family: itim, sans-serif;
+}
+
+.Logo-Principal{
+  height: 100px;
+}
+
+
+
+
+.container-sections {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.container-sections section {
+  min-height: 100vh;
+}
+
+.container-table.flex {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.table-items {
+  width: 100%;
+  max-width: 1200px;
+  border-collapse: collapse;
+  background-color: rgb(20, 14, 14);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.table-items th, .table-items td {
+  padding: 15px;
+  text-align: center;
+  border: 1px solid #4f3939;
+}
+
+.table-items th {
+  background-color: #f4f4f4;
+}
+
+.table-items td {
+  background-color: #fff;
+}
+
+.container-btn-delete-all {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: flex-end;
+  margin: 1rem auto;
+}
+
+.container-btn-delete-all .btn {
+  max-width: 7rem;
+}
+
+.btn-update{
+  background: green;
+  margin-bottom: 5px;
+}
+
+.spinner{
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  position: fixed;
+  background-color: #7a73738f;
+  width: 100%;
+  height: 100%;
+  top: 0;
+}
+
+.spinner-img{
+  width: 200px;
+  height: 200px;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+}
+
+/*filtros tabla*/
+
+cssCopy.filtro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.filtro-adicionales {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.checkbox-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+}
+
+.form-check-label {
+  margin-left: 5px;
+}
+
+.filtro input[type="text"] {
+  width: 250px;
+  margin: 0;
+}
+
+.btn {
+  margin-top: 10px;
+}

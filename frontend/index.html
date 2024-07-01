@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  
+  <link rel="stylesheet" href="./styles/index.css" />
+
+
+  <link rel="icon" type="image/x-icon" href="assets/images/logo.svg" />
+  <script src="./js/index.js" type="module" defer></script>
+
+  <link rel="stylesheet" href="./styles/bootstrap/css/bootstrap.min.css" />
+  <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="./styles/form.css" />
+
+  <title>Segundo Parcial</title>
+</head>
+
+<body style="background-color: grey;">
+  <div class="contenedor">
+    <header class="hero">
+      <div class="overlay"></div>
+      <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:rgba(0, 0, 0, 0.5);">
+        <div class="container-fluid">
+          <img src="./assets/images/logo.svg" class="Logo-Principal" alt="Logo Principal" style="height: 100px;" />
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto" style="font-size: 1.5rem">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">Nosotros</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Anuncios</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Blog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Contacto</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div class="container hero-content">
+        <h1 class="text-left text-white" style="margin-top: 40%; margin-left: -18%; font-size: 4.0rem;">Administrador de
+          planetas</h1>
+      </div>
+    </header>
+
+    <div class="container-sections">
+      <section>
+        <form action="" method="post" id="form-item">
+          <h2>Informacion del planeta</h2>
+
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+
+            <input type="text" required name="nombre" id="nombre" placeholder="Ingrese nombre.." />
+          </div>
+
+          <div class="form-group">
+            <label for="tamano">Tamaño</label>
+
+            <input type="number" required name="tamano" id="tamano" placeholder="Ingrese tamaño.." />
+          </div>
+
+          <div class="form-group">
+            <label for="masa">Masa</label>
+            <input type="text" required name="masa" id="masa" placeholder="Ingrese masa.." />
+          </div>
+
+          <div class="form-group">
+            <label for="tipo">Tipo</label>
+            <select name="Tipo" id="tipo">
+              <option value="">Seleccione</option>
+              <option value="rocoso">rocoso</option>
+              <option value="gaseoso">gaseoso</option>
+              <option value="helado">helado</option>
+              <option value="enano">enano</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="distancia">Distancia al Sol</label>
+            <input type="number" id="distancia" name="distancia" placeholder="Ingrese Distancia..">
+          </div>
+
+          <div class="form-group">
+            <label for="vida">Presenta Vida</label>
+            <input type="checkbox" id="vida" name="vida">
+          </div>
+
+          <div class="form-group">
+            <label for="anillo">Presenta Anillo</label>
+            <input type="checkbox" id="anillo" name="anillo">
+          </div>
+
+          <div class="form-group">
+            <label for="composicion">Composicion Atmosferica</label>
+            <textarea id="composicion" name="composicion" placeholder="Ingrese Composición.." rows="3">
+              </textarea>
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-warning">Guardar</button>
+            <button type="cancel" id="btn-cancelar" class="btn btn-secondary">Cancelar</button>
+            <button type="eliminar" id="btn-eliminar" class="btn btn-danger" style="display: none;">Eliminar</button>
+          </div>
+        </form>
+
+        <div class="container-btn-delete-all">
+          <button type="button" id="btn-delete-all" class="btn btn-danger">Borrar Todo</button>
+        </div>
+
+        <div class="filtro" style="margin-top: 60px;">
+          <div class="input-row">
+            <div class="input-container">
+              <label for="filtroNombre" style="font-size: 1.3rem;">Nombre:</label>
+              <input type="text" class="form-control" id="filtroNombre" placeholder="Ingrese nombre">
+            </div>
+            <div class="input-container">
+              <label for="filtroTipo" style="font-size: 1.3rem;">Tipo:</label>
+              <input type="text" class="form-control" id="filtroTipo" placeholder="Ingrese tipo">
+            </div>
+          </div>
+          <div class="filtro-adicionales">
+            <label>Filtros adicionales:</label>
+            <div class="checkbox-container">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="checkAnillo">
+                <label class="form-check-label" for="checkAnillo">Anillo</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="checkVida">
+                <label class="form-check-label" for="checkVida">Vida</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="checkAtmosfera">
+                <label class="form-check-label" for="checkAtmosfera">Atmosfera</label>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-filtrar">Filtrar</button>
+        </div>
+
+        <div class="container-table flex">
+          <table id="table-items" class="table-items table-stripped flex">
+            <thead>
+              <tr class="flex">
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Tamaño</th>
+                <th>Masa</th>
+                <th>Tipo</th>
+                <th>Distancia al sol</th>
+                <th>Posee Anillo</th>
+                <th>Presencia de vida</th>
+                <th>Composicion Atmosferica</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="tbodyx"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="text-center text-white" style="background-color: #0a4275;">
+    <div class="container p-4 pb-0">
+      <section class="">
+        <p class="d-flex justify-content-center align-items-center">
+          <span class="me-3" style="margin-top: 10px;">Register for free</span>
+          <button data-mdb-ripple-init type="button" class="btn btn-primary" style="width: 100px;">
+            Sign up!
+          </button>
+        </p>
+      </section>
+    </div>
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+      <p>Todos los derechos reservados <span id="year"></span> &copy;</p>
+    </div>
+  </footer>
+
+  <div id="spinner" class="spinner">
+    <img src="./assets/images/logo.svg" alt="Spinner" class="spinner-img">
+  </div>
+</body>
+
+</html>
