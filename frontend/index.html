@@ -167,7 +167,18 @@
                 <th>Acciones</th>
               </tr>
             </thead>
-            <tbody class="tbodyx"></tbody>
+            <tbody class="tbodyx">
+              <select id="tipo-planeta" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                <option selected>Seleccione Tipo</option>
+                <option value="rocoso">Rocoso</option>
+                <option value="Gaseoso">Gaseoso</option>
+                <option value="Helado">Helado</option>
+                <option value="Enano">Enano</option>
+              </select>
+              <div style="margin-bottom: 20px;background-color: whitesmoke;width: 240px;height: 25px;">
+                <output id="promedio" for="tipo-planeta">Promedio: </output>
+              </div>
+            </tbody>
           </table>
         </div>
       </section>

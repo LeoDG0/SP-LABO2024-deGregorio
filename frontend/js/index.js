@@ -1,9 +1,9 @@
 import { Planeta } from "./planeta.js";
-import { leer, escribir, limpiar, jsonToObject, objectToJson } from "./local-storage-delay.js";
 import { mostrarSpinner, ocultarSpinner } from "./spinner.js";
 import { PlanetaBase } from "./planeta-base.js";
+import { obtenerTodos, obtenerUno, crearPlaneta, actualizarPlaneta, eliminarPlaneta, eliminarTodos } from "./api.js";
 
-const KEY_STORAGE = "planetas";
+
 let items = [];
 const formulario = document.getElementById("form-item");
 let editIndex = null; 
@@ -16,11 +16,43 @@ document.addEventListener("DOMContentLoaded", onInit);
 function onInit() {
     actualizarAño();
     loadItems();
-    escuchandoFormulario();
+    escuchandoFormulario();E
     escuchandoBtnDeleteAll();
     escuchandBtnCancelar();
     escuchandoBtnFiltrar();
+    escuchandoSelectTipo();
 }
+
+function escuchandoSelectTipo() {
+    const selectTipo = document.getElementById('tipo-planeta');
+    selectTipo.addEventListener('change', function() {
+        const tipoSeleccionado = this.value;
+        console.log("Tipo seleccionado:", tipoSeleccionado);
+        console.log("Items:", items);
+        const promedio = calcularPromedioTamanoPorTipo(items, tipoSeleccionado);
+        console.log("Promedio calculado:", promedio);
+        document.getElementById('promedio').textContent = `Promedio: ${promedio}`;
+    });
+}
+
+
+function calcularPromedioTamanoPorTipo(items, tipo) {
+    console.log("Calculando promedio para el tipo:", tipo);
+    const planetasFiltrados = items.filter(planeta => planeta.tipo.toLowerCase() === tipo.toLowerCase());
+    console.log("Planetas filtrados:", planetasFiltrados);
+
+    if (planetasFiltrados.length > 0) {
+        const tamanosNumeros = planetasFiltrados.map(planeta => parseFloat(planeta.tamano));
+        console.log("Tamaños convertidos:", tamanosNumeros);
+
+        const totalTamano = tamanosNumeros.reduce((acc, tamano) => acc + tamano, 0);
+        const promedio = totalTamano / planetasFiltrados.length;
+        return promedio.toFixed(2);
+    } else {
+        return 'n/a';
+    }
+}
+
 
 function escuchandoBtnFiltrar() {
     const btnFiltrar = document.getElementById("btn-filtrar");
@@ -39,13 +71,13 @@ function filtrarTabla() {
 
     tbody.innerHTML = '';
 
-    const celdas = ["id", "nombre", "tamano", "masa", "tipo", "distanciaAlSol", "presentaAnillo", "presentaVida", "composicionAtmosferica"];
+    const celdas = ["id", "nombre", "tamano", "masa", "tipo", "distanciaAlSol", "poseeAnillo", "presenciaVida", "composicionAtmosferica"];
 
     const itemsFiltrados = items.filter(item => {
         return (filtroNombre === "" || item.nombre.toLowerCase().includes(filtroNombre)) &&
                (filtroTipo === "" || item.tipo.toLowerCase().includes(filtroTipo)) &&
-               (!checkAnillo || item.presentaAnillo) &&
-               (!checkVida || item.presentaVida) &&
+               (!checkAnillo || item.poseeAnillo) &&
+               (!checkVida || item.presenciaVida) &&
                (!checkAtmosfera || item.composicionAtmosferica);
     });
 
@@ -53,8 +85,8 @@ function filtrarTabla() {
         let nuevaFila = document.createElement("tr");
         celdas.forEach((celda) => {
             let nuevaCelda = document.createElement("td");
-            if (celda === "presentaAnillo" || celda === "presentaVida") {
-                nuevaCelda.textContent = "";
+            if (celda === "poseeAnillo" || celda === "presenciaVida") {
+                nuevaCelda.textContent = "n/a";
             } else if (celda === "composicionAtmosferica") {
                 nuevaCelda.textContent = "n/a";
             } else {
@@ -69,7 +101,7 @@ function filtrarTabla() {
 
             celdas.forEach((celda) => {
                 let nuevaCelda = document.createElement("td");
-                if (celda === "presentaAnillo" || celda === "presentaVida") {
+                if (celda === "poseeAnillo" || celda === "presenciaVida") {
                     nuevaCelda.textContent = item[celda] ? "Sí" : "No";
                 } else if (celda === "composicionAtmosferica") {
                     nuevaCelda.textContent = item[celda] || "n/a";
@@ -104,8 +136,6 @@ function filtrarTabla() {
 }
 
 
-
-
 function escuchandBtnCancelar(){
     btnCancelar.addEventListener("click", cancelarEdicion);
 }
@@ -121,34 +151,21 @@ function cancelarEdicion(){
 
 async function loadItems() {
     mostrarSpinner();
-    let str = await leer(KEY_STORAGE);
-    ocultarSpinner();
-    let objetos = jsonToObject(str) || [];
+    try {
+        items = await obtenerTodos();
+        ocultarSpinner();
 
-    if (Array.isArray(objetos)) {
-        objetos.forEach(obj => {
-            const model = new Planeta(
-                obj.nombre,
-                obj.tamano,
-                obj.masa,
-                obj.tipo,
-                obj.distanciaAlSol,
-                obj.presentaVida,
-                obj.presentaAnillo,
-                obj.composicionAtmosferica
-            );
-            model.id = obj.id;
-            items.push(model);
-        });
-
-        const maxId = Math.max(...items.map(item => item.id), 0) + 1; /*https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Operators/Spread_syntax lo saque de aca al spread, lo uso para conseguir el id mas alto*/
-        PlanetaBase.nextId = maxId + 1;
-
-        rellenarTabla();
-    } else {
-        console.error("los datos no son array");
+        if (Array.isArray(items)) {
+            rellenarTabla();
+        } else {
+            console.error("Los datos recibidos no son un array.");
+        }
+    } catch (error) {
+        console.error("Error al cargar los items:", error);
+        ocultarSpinner();
     }
 }
+
 
 function rellenarTabla() {
     const tabla = document.getElementById("table-items");
@@ -203,32 +220,44 @@ async function escuchandoFormulario() {
 
         const model = capturarDatosFormulario();
 
-        
         const validacion = model.verify();
         if (!validacion.success) {
             mostrarErrores(validacion.errores);
             return;
         }
 
+        mostrarSpinner();
+
         if (editIndex !== null) {
             model.id = items[editIndex].id;
-            items[editIndex] = model;
-            editIndex = null;
-            originalItem = null;
-            btnEliminar.style.display = "none";
+            try {
+                await actualizarPlaneta(model.id, model); 
+                items[editIndex] = model;
+                editIndex = null;
+                originalItem = null;
+                btnEliminar.style.display = "none";
+            } catch (error) {
+                console.error("Error al actualizar el planeta:", error);
+                mostrarErrores(["Error al actualizar el planeta. Intentelo de nuevo mas tarde."]);
+                return;
+            }
         } else {
-            items.push(model);
+            try {
+                const nuevoPlaneta = await crearPlaneta(model); 
+                items.push(nuevoPlaneta);
+            } catch (error) {
+                console.error("Error al crear el nuevo planeta:", error);
+                mostrarErrores(["Error al crear el nuevo planeta. Intentelo de nuevo mas tarde."]);
+                return;
+            }
         }
 
-        const str = objectToJson(items);
-
-        mostrarSpinner();
-        await escribir(KEY_STORAGE, str);
-        ocultarSpinner();
-        actualizarFormulario();
         rellenarTabla();
+        actualizarFormulario();
+        ocultarSpinner();
     });
 }
+
 
 function capturarDatosFormulario() {
     return new Planeta(
@@ -258,15 +287,20 @@ async function escuchandoBtnDeleteAll() {
     const btn = document.getElementById("btn-delete-all");
 
     btn.addEventListener("click", async () => {
-        const rta = confirm("Desea eliminar todos los items?");
-
+        const rta = confirm("¿Desea eliminar todos los items?");
+        mostrarSpinner();
         if (rta) {
-            items.splice(0, items.length);
-
             mostrarSpinner();
-            await limpiar(KEY_STORAGE);
+            try {
+                await eliminarTodos();
+                items = [];
+                rellenarTabla();
+            } catch (error) {
+                console.error("Error al eliminar todos los planetas:", error);
+                mostrarErrores(["Error al eliminar todos los items. Intentelo de nuevo mas tarde."]);
+                return;
+            }
             ocultarSpinner();
-            rellenarTabla();
         }
     });
 }
@@ -277,24 +311,23 @@ function actualizarAño() {
     yearElement.textContent = año;
 }
 
-async function onDelete(index) { 
-    const rta = confirm('Desea eliminar el item?');
-    mostrarSpinner();
-
+async function onDelete(index) {
+    const rta = confirm('¿Desea eliminar el item?');
     if (rta) {
+        mostrarSpinner();
         try {
-            items.splice(index, 1); 
-            const str = objectToJson(items);
-            await escribir(KEY_STORAGE, str);
+            await eliminarPlaneta(items[index].id);
+            items.splice(index, 1);
             rellenarTabla();
             actualizarFormulario();
-            btnEliminar.style.display = "none"; 
+            btnEliminar.style.display = "none";
         } catch (error) {
-            console.error(error);
+            console.error("Error al eliminar el planeta:", error);
+            mostrarErrores(["Error al eliminar el planeta. Intentelo de nuevo mas tarde."]);
+            return;
         }
+        ocultarSpinner();
     }
-
-    ocultarSpinner();
 }
 
 function onUpdate(index) {
