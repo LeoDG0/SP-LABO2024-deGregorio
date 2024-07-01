@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", onInit);
 function onInit() {
     actualizarAño();
     loadItems();
-    escuchandoFormulario();E
+    escuchandoFormulario();
     escuchandoBtnDeleteAll();
     escuchandBtnCancelar();
     escuchandoBtnFiltrar();
